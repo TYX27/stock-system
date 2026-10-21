@@ -1,0 +1,85 @@
+DEPLOY STOCK SYSTEM TO THE CLOUD (permanent shareable link)
+==========================================================
+
+You will get a link like:  https://stock-system-xxxx.up.railway.app
+Anyone (phone / other office) opens that link and logs in.
+Your PC does NOT need to stay on.
+
+----------------------------------------------------------
+A. Create free accounts
+----------------------------------------------------------
+1. GitHub: https://github.com/signup  (if you don't have one)
+2. Railway: https://railway.app  → Sign up with GitHub
+
+----------------------------------------------------------
+B. Put the project on GitHub
+----------------------------------------------------------
+1. On your PC, unzip stock-system.zip
+2. Go to https://github.com/new
+   - Repository name: stock-system
+   - Public
+   - Create repository
+3. On your PC, open PowerShell in the project folder
+   (the folder that has docker-compose.yml and package.json):
+
+   git init
+   git add .
+   git commit -m "stock system"
+   git branch -M main
+   git remote add origin https://github.com/YOUR_USERNAME/stock-system.git
+   git push -u origin main
+
+   (Replace YOUR_USERNAME. GitHub may ask you to login.)
+
+----------------------------------------------------------
+C. Deploy on Railway
+----------------------------------------------------------
+1. https://railway.app/new
+2. "Deploy from GitHub repo" → choose stock-system
+3. After it creates the service, click the project
+4. Click "+ New" → Database → PostgreSQL
+5. Click the **web service** (not the database) → Variables
+6. Add variable:
+   JWT_SECRET = anything-long-and-secret-12345
+7. Railway usually auto-adds DATABASE_URL when you link Postgres:
+   - On the web service → Variables → "Add reference" / connect Postgres
+   - Or open Postgres → Variables → copy DATABASE_URL into the web service
+8. Settings → generate a domain (or Networking → Public URL)
+9. Wait until deploy status is Success
+
+----------------------------------------------------------
+D. Open your system
+----------------------------------------------------------
+Click the Railway public URL, e.g.
+  https://stock-system-production-xxxx.up.railway.app
+
+Login:
+  admin
+  admin123
+
+CHANGE THE PASSWORD after first login (Users tab).
+
+----------------------------------------------------------
+E. Load your real data (transactions + serials)
+----------------------------------------------------------
+On your PC (with the backup JSON):
+
+  set DATABASE_URL=paste-the-railway-DATABASE_URL-here
+  cd backend
+  npm install
+  node scripts\import-direct.js "..\stock_system_backup.json" --clear
+
+Or use Railway CLI / SQL if preferred.
+
+----------------------------------------------------------
+F. Share
+----------------------------------------------------------
+Send the Railway URL to anyone.
+They login with accounts you create (admin → Users tab).
+
+----------------------------------------------------------
+NOTES
+----------------------------------------------------------
+- Free Railway has limits; for a small office stock app it is usually enough.
+- If deploy fails, open Railway → Deployments → View logs and copy the error.
+- Local Docker still works for you on this PC if you want.
