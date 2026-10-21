@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm install", "npm install --prefix backend", "npm install --prefix frontend"]
+
+[phases.build]
+cmds = ["npm run build --prefix frontend", "mkdir -p backend/public", "cp -r frontend/dist/* backend/public/"]
+
+[start]
+cmd = "NODE_PATH=/app/node_modules:/app/backend/node_modules node backend/scripts/init-db.js && NODE_PATH=/app/node_modules:/app/backend/node_modules node backend/src/index.js"

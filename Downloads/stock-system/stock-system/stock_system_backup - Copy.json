@@ -1,0 +1,410 @@
+{
+  "branches": [
+    "HQ",
+    "WH",
+    "SHOWROOM",
+    "CY1",
+    "CY2",
+    "SMY1",
+    "SMY2",
+    "SB1",
+    "SA1",
+    "SA2",
+    "SA3",
+    "Elmina",
+    "BR1",
+    "BR2",
+    "SR1",
+    "SR2",
+    "SR3"
+  ],
+  "items": [
+    {
+      "category": "Computing Hardware",
+      "name": "CPU",
+      "starting": 7
+    },
+    {
+      "category": "Computing Hardware",
+      "name": "PC-216B Cartridge",
+      "starting": 17
+    },
+    {
+      "category": "Computing Hardware",
+      "name": "Desktop Hard Drive",
+      "starting": 5
+    },
+    {
+      "category": "Computing Hardware",
+      "name": "UGreen USB-C Hub",
+      "starting": 1
+    },
+    {
+      "category": "Computing Hardware",
+      "name": "Lenovo Monitor",
+      "starting": 2
+    },
+    {
+      "category": "Networking & Storage",
+      "name": "Desktop Switch",
+      "starting": 1
+    },
+    {
+      "category": "Networking & Storage",
+      "name": "Synology",
+      "starting": 1
+    },
+    {
+      "category": "POS Equipment",
+      "name": "Cash Drawer",
+      "starting": 3
+    },
+    {
+      "category": "POS Equipment",
+      "name": "Thermal Label Printer",
+      "starting": 3
+    },
+    {
+      "category": "POS Equipment",
+      "name": "HPRT Thermal Pos Printer",
+      "starting": 1
+    },
+    {
+      "category": "POS Equipment",
+      "name": "Barcode Scanner",
+      "starting": 1
+    },
+    {
+      "category": "Printers & Cartridges",
+      "name": "(Epson) Cartridge",
+      "starting": 1
+    },
+    {
+      "category": "Printers & Cartridges",
+      "name": "B-TN2480 Cartridge",
+      "starting": 3
+    },
+    {
+      "category": "Printers & Cartridges",
+      "name": "Premium Toner Cartridge TN2560",
+      "starting": 2
+    },
+    {
+      "category": "Printers & Cartridges",
+      "name": "H-W136X Cartridge",
+      "starting": 6
+    },
+    {
+      "category": "Printers & Cartridges",
+      "name": "Printer (Brother)",
+      "starting": 1
+    },
+    {
+      "category": "Cameras",
+      "name": "Insta360 Cam",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "Samsung Galaxy A14",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "(5G) Realme 12",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "Realme Note 10",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "(5G) Realme 11",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "Huawei Nova 4",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "(5G) OnePlus Nord N10",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "Samsung Galaxy A07 (5G)",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "Motorola T101 Phone",
+      "starting": 1
+    },
+    {
+      "category": "Mobile Phones",
+      "name": "Motorola Voice T401+ Phone",
+      "starting": 1
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "year": 2026,
+      "month": 10,
+      "day": 16,
+      "hour": "12",
+      "min": "06",
+      "branch": "HQ",
+      "item": "H-W136X Cartridge",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "Reception Printer",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 2,
+      "year": 2026,
+      "month": 10,
+      "day": 16,
+      "hour": "17",
+      "min": "10",
+      "branch": "HQ",
+      "item": "Premium Toner Cartridge TN2560",
+      "type": "Add Stock",
+      "qty": 2,
+      "notes": "Printer",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 3,
+      "year": 2026,
+      "month": 10,
+      "day": 16,
+      "hour": "17",
+      "min": "10",
+      "branch": "WH",
+      "item": "Premium Toner Cartridge TN2560",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "Warehouse",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 4,
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "10",
+      "min": "00",
+      "branch": "WH",
+      "item": "Lenovo Monitor",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "Warehouse",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 5,
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "10",
+      "min": "00",
+      "branch": "WH",
+      "item": "CPU",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "Warehouse",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 6,
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "14",
+      "min": "57",
+      "branch": "WH",
+      "item": "Desktop Switch",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "Reception",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 7,
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "14",
+      "min": "58",
+      "branch": "SA1",
+      "item": "HPRT Thermal Pos Printer",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "SA1",
+      "by": "Yi Xian",
+      "serial": "",
+      "takenBy": ""
+    },
+    {
+      "id": 8,
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "00",
+      "branch": "HQ",
+      "item": "Samsung Galaxy A07 (5G)",
+      "type": "Add Stock",
+      "qty": 1,
+      "notes": "",
+      "by": "Yi Xian",
+      "serial": "R7AL700SM5P",
+      "takenBy": ""
+    },
+    {
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "00",
+      "branch": "HQ",
+      "item": "Samsung Galaxy A07 (5G)",
+      "type": "Add Stock",
+      "qty": 1,
+      "notes": "",
+      "takenBy": "",
+      "by": "Yi Xian",
+      "serial": "R7AL700SM1N",
+      "id": 11
+    },
+    {
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "00",
+      "branch": "HQ",
+      "item": "Samsung Galaxy A07 (5G)",
+      "type": "Add Stock",
+      "qty": 1,
+      "notes": "",
+      "takenBy": "",
+      "by": "Yi Xian",
+      "serial": "R7AL700V1PN",
+      "id": 13
+    },
+    {
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "00",
+      "branch": "CY2",
+      "item": "Samsung Galaxy A07 (5G)",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "",
+      "takenBy": "Ms Wan",
+      "by": "Yi Xian",
+      "serial": "R7AL700V1PN",
+      "id": 15
+    },
+    {
+      "year": 2026,
+      "month": 10,
+      "day": 16,
+      "hour": "17",
+      "min": "10",
+      "branch": "CY2",
+      "item": "Premium Toner Cartridge TN2560",
+      "type": "Take Out",
+      "qty": 1,
+      "notes": "1 HR",
+      "takenBy": "",
+      "by": "Yi Xian",
+      "serial": "",
+      "id": 16
+    }
+  ],
+  "nextId": 17,
+  "serialRegistry": [
+    {
+      "id": "S9",
+      "item": "Samsung Galaxy A07 (5G)",
+      "serial": "R7AL5012N3T",
+      "branch": "WH",
+      "notes": "",
+      "status": "In Stock",
+      "takenBy": "",
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "40",
+      "by": ""
+    },
+    {
+      "id": "S10",
+      "item": "Samsung Galaxy A07 (5G)",
+      "serial": "R7AL700SM5P",
+      "branch": "HQ",
+      "notes": "",
+      "status": "In Stock",
+      "takenBy": "",
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "00",
+      "by": "Yi Xian"
+    },
+    {
+      "id": "S12",
+      "item": "Samsung Galaxy A07 (5G)",
+      "serial": "R7AL700SM1N",
+      "branch": "HQ",
+      "notes": "",
+      "status": "In Stock",
+      "takenBy": "",
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "15",
+      "min": "00",
+      "by": "Yi Xian"
+    },
+    {
+      "id": "S14",
+      "item": "Samsung Galaxy A07 (5G)",
+      "serial": "R7AL700V1PN",
+      "branch": "HQ",
+      "notes": "",
+      "status": "Taken Out",
+      "takenBy": "Ms Wan",
+      "year": 2026,
+      "month": 10,
+      "day": 19,
+      "hour": "17",
+      "min": "17",
+      "by": "Yi Xian"
+    }
+  ]
+}

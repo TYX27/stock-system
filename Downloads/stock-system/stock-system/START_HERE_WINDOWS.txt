@@ -1,0 +1,111 @@
+STOCK SYSTEM - WINDOWS + LAN GUIDE
+==================================
+
+REQUIREMENTS (install once)
+1. Node.js LTS  ->  https://nodejs.org
+2. Docker Desktop  ->  https://www.docker.com/products/docker-desktop
+   Open Docker Desktop and wait until it says "Running"
+
+----------------------------------
+STEP 1 - UNZIP
+----------------------------------
+Extract stock-system.zip to C:\stock-system
+You should see:
+  C:\stock-system\stock-system\docker-compose.yml
+  OR
+  C:\stock-system\docker-compose.yml
+
+Use the folder that contains docker-compose.yml.
+
+----------------------------------
+STEP 2 - START DATABASE
+----------------------------------
+cd C:\stock-system\stock-system
+docker compose up -d
+
+Wait 15-20 seconds.
+
+----------------------------------
+STEP 3 - RESTORE YOUR DATA (important)
+----------------------------------
+After docker is up, load your real transactions + serials:
+
+cd C:\stock-system\stock-system\backend
+npm install
+node scripts\import-direct.js "C:\stock-system\stock-system\stock_system_backup.json" --clear
+
+You should see: Connected to PostgreSQL / Import OK
+
+(If your backup is on Desktop, use that path instead.)
+
+----------------------------------
+STEP 4 - START BACKEND (leave open)
+----------------------------------
+cd C:\stock-system\stock-system\backend
+npm run dev
+
+Expect: Stock API running on http://0.0.0.0:4000
+
+----------------------------------
+STEP 5 - START FRONTEND (new window, leave open)
+----------------------------------
+cd C:\stock-system\stock-system\frontend
+npm install
+npm run dev
+
+Expect: http://localhost:5173
+
+----------------------------------
+STEP 6 - LOGIN
+----------------------------------
+This PC browser:  http://localhost:5173
+
+Default admin:
+  Username: admin
+  Password: admin123
+
+Roles:
+  admin = create / edit / delete everything
+  user  = view only
+
+----------------------------------
+SHARE ON SAME WIFI (phones / other PCs)
+----------------------------------
+1. On THIS PC run:
+   ipconfig
+   Find IPv4 Address under Wi-Fi, e.g. 192.168.1.25
+
+2. Keep Docker + backend + frontend RUNNING on this PC.
+
+3. On phone / other PC (same Wi-Fi), open:
+   http://192.168.1.25:5173
+   (use YOUR IPv4)
+
+4. If page does not load: allow Node in Windows Firewall when asked,
+   or allow ports 5173 and 4000.
+
+5. Login with admin / admin123 or accounts you created.
+
+Outside your Wi-Fi (internet) will NOT work without cloud/tunnel.
+
+----------------------------------
+IF DATA IS EMPTY AGAIN
+----------------------------------
+Docker volume was reset, or import was not run.
+
+Fix:
+  cd C:\stock-system\stock-system\backend
+  node scripts\import-direct.js "C:\stock-system\stock-system\stock_system_backup.json" --clear
+
+Then refresh the browser.
+
+To export latest data from the HTML system first:
+  Open HTML -> Export JSON -> save file -> import with the command above.
+
+----------------------------------
+EVERY DAY
+----------------------------------
+1. Docker Desktop Running
+2. backend:  npm run dev
+3. frontend: npm run dev
+4. Browser localhost:5173 or http://YOUR-IP:5173
