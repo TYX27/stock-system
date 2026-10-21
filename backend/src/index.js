@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
@@ -28,14 +29,27 @@ app.use('/api/serials', requireAuth, serials);
 app.use('/api/reports', requireAuth, reports);
 app.use('/api/import', requireAuth, importRoutes);
 
-// Serve React build in production (same URL for API + website)
+// Serve React build (same URL for API + website)
 const publicDir = path.join(__dirname, '..', 'public');
-app.use(express.static(publicDir));
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) return next();
-  res.sendFile(path.join(publicDir, 'index.html'), (err) => {
-    if (err) next();
-  });
+const indexHtml = path.join(publicDir, 'index.html');
+
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+}
+
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
+  if (fs.existsSync(indexHtml)) {
+    return res.sendFile(indexHtml);
+  }
+  res
+    .status(200)
+    .type('html')
+    .send(
+      '<h1>Stock API is running</h1><p>Frontend files missing. Check Railway build logs for <code>npm run build</code>.</p><p><a href="/api/health">/api/health</a></p>'
+    );
 });
 
 app.use((err, _req, res, _next) => {
@@ -45,4 +59,5 @@ app.use((err, _req, res, _next) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Stock system on port ${PORT}`);
+  console.log('Public dir:', publicDir, 'index exists:', fs.existsSync(indexHtml));
 });

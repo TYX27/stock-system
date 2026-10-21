@@ -42,6 +42,8 @@ function isSerialItem(name, category = '') {
 function UsersAdmin({ showToast, isAdmin, currentUserId, onSelfUpdated }) {
   const [list, setList] = useState([]);
   const [form, setForm] = useState({ username: '', password: '', displayName: '', role: 'user' });
+  const [showCreatePw, setShowCreatePw] = useState(false);
+  const [showEditPw, setShowEditPw] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editForm, setEditForm] = useState({
     username: '',
@@ -118,15 +120,22 @@ function UsersAdmin({ showToast, isAdmin, currentUserId, onSelfUpdated }) {
   }
 
   async function deleteUser(id, username) {
-    if (id === currentUserId) {
-      showToast('Cannot delete your own account');
-      return;
-    }
-    if (!confirm(`Delete user "${username}"? This cannot be undone.`)) return;
+    const isSelf = id === currentUserId;
+    const msg = isSelf
+      ? `Delete YOUR OWN account "${username}"? You will be logged out. This cannot be undone.`
+      : `Delete user "${username}"? This cannot be undone.`;
+    if (!confirm(msg)) return;
+    if (isSelf && !confirm('Are you sure? There must be another admin or you will lock yourself out.')) return;
     try {
       await api.auth.deleteUser(id);
       showToast('User deleted');
       if (editId === id) setEditId(null);
+      if (isSelf) {
+        setToken(null);
+        setUser(null);
+        window.location.reload();
+        return;
+      }
       load();
     } catch (ex) {
       showToast(ex.message);
@@ -138,14 +147,29 @@ function UsersAdmin({ showToast, isAdmin, currentUserId, onSelfUpdated }) {
       <h2>👥 Users</h2>
       <p className="hint">
         {isAdmin
-          ? 'Admin can create, edit (username, name, role, password), and delete any account including the default admin. You cannot delete yourself.'
+          ? 'Admin can create, edit, and delete any account (including your own). Passwords are stored encrypted — you cannot see old passwords, only set a new one. Use the eye button to show what you type.'
           : 'View-only. Only admin can create, edit, or delete users.'}
       </p>
 
       {isAdmin && (
         <form onSubmit={create} className="form-grid">
           <div><label>Username</label><input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required /></div>
-          <div><label>Password</label><input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required minLength={4} /></div>
+          <div>
+            <label>Password</label>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <input
+                type={showCreatePw ? 'text' : 'password'}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+                minLength={4}
+                style={{ flex: 1 }}
+              />
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowCreatePw((v) => !v)}>
+                {showCreatePw ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
           <div><label>Display name</label><input value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} /></div>
           <div><label>Role</label>
             <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
@@ -190,14 +214,20 @@ function UsersAdmin({ showToast, isAdmin, currentUserId, onSelfUpdated }) {
             </select>
           </div>
           <div style={{ gridColumn: 'span 2' }}>
-            <label>New password (optional)</label>
-            <input
-              type="password"
-              value={editForm.password}
-              onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-              minLength={4}
-              placeholder="Leave blank to keep current password"
-            />
+            <label>New password (optional — old password cannot be shown, only replaced)</label>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <input
+                type={showEditPw ? 'text' : 'password'}
+                value={editForm.password}
+                onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                minLength={4}
+                placeholder="Leave blank to keep current password"
+                style={{ flex: 1 }}
+              />
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowEditPw((v) => !v)}>
+                {showEditPw ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
           <div style={{ gridColumn: 'span 2', display: 'flex', gap: 8 }}>
             <button type="submit" className="btn btn-primary">Save changes</button>
@@ -227,9 +257,7 @@ function UsersAdmin({ showToast, isAdmin, currentUserId, onSelfUpdated }) {
                 {isAdmin && (
                   <td style={{ whiteSpace: 'nowrap' }}>
                     <button className="btn btn-outline btn-sm" onClick={() => startEdit(u)}>Edit</button>{' '}
-                    {u.id !== currentUserId && (
-                      <button className="btn btn-red btn-sm" onClick={() => deleteUser(u.id, u.username)}>Delete</button>
-                    )}
+                    <button className="btn btn-red btn-sm" onClick={() => deleteUser(u.id, u.username)}>Delete</button>
                   </td>
                 )}
               </tr>

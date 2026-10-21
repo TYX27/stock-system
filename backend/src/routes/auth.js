@@ -163,12 +163,9 @@ router.patch('/users/:id', requireAdmin, async (req, res, next) => {
 router.delete('/users/:id', requireAdmin, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10);
-    if (req.user.id === id) {
-      return res.status(400).json({ error: 'Cannot delete your own account' });
-    }
     const { rowCount } = await db.query('DELETE FROM users WHERE id = $1', [id]);
     if (!rowCount) return res.status(404).json({ error: 'Not found' });
-    res.json({ ok: true });
+    res.json({ ok: true, deletedSelf: req.user.id === id });
   } catch (e) {
     next(e);
   }

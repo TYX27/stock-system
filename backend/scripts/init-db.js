@@ -4,18 +4,25 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes('localhost') ? false : { rejectUnauthorized: false },
-});
-
 async function main() {
-  if (!process.env.DATABASE_URL) {
-    console.log('No DATABASE_URL — skip init');
-    process.exit(0);
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    console.error('ERROR: DATABASE_URL is not set on this service.');
+    console.error('In Railway: stock-system → Variables → add DATABASE_URL from Postgres.');
+    process.exit(1);
   }
-  const client = await pool.connect();
+
+  const isLocal = /localhost|127\.0\.0\.1/.test(connectionString);
+  console.log('Connecting to database…', isLocal ? '(local)' : '(cloud SSL)');
+
+  const pool = new Pool({
+    connectionString,
+    ssl: isLocal ? false : { rejectUnauthorized: false },
+  });
+
+  let client;
   try {
+    client = await pool.connect();
     const r = await client.query(
       "SELECT 1 FROM information_schema.tables WHERE table_name = 'users'"
     );
@@ -23,17 +30,36 @@ async function main() {
       console.log('Database already initialized');
       return;
     }
-    const schemaPath = path.join(__dirname, '..', '..', 'database', 'schema.sql');
+
+    const candidates = [
+      path.join(__dirname, '..', '..', 'database', 'schema.sql'),
+      path.join(process.cwd(), 'database', 'schema.sql'),
+      path.join(__dirname, '..', 'database', 'schema.sql'),
+    ];
+    let schemaPath = null;
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        schemaPath = p;
+        break;
+      }
+    }
+    if (!schemaPath) {
+      console.error('schema.sql not found. Tried:', candidates.join(' | '));
+      process.exit(1);
+    }
+
+    console.log('Loading schema from', schemaPath);
     const sql = fs.readFileSync(schemaPath, 'utf8');
     await client.query(sql);
-    console.log('Schema + seed loaded');
+    console.log('Schema + seed loaded OK');
   } finally {
-    client.release();
+    if (client) client.release();
     await pool.end();
   }
 }
 
 main().catch((e) => {
-  console.error('init-db failed:', e.message);
+  console.error('init-db failed:', e && (e.stack || e.message || String(e)));
+  if (e && e.code) console.error('code:', e.code);
   process.exit(1);
 });
