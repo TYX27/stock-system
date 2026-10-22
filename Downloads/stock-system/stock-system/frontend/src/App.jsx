@@ -13,6 +13,16 @@ const TABS = [
   { id: 'users', label: 'Users' },
 ];
 
+const CATEGORIES = [
+  'Computing Hardware',
+  'Networking & Storage',
+  'POS Equipment',
+  'Printers & Cartridges',
+  'Cameras',
+  'Mobile Phones',
+  'Other',
+];
+
 const pad = (n) => String(n).padStart(2, '0');
 const years = [2026, 2027, 2028, 2029, 2030];
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -371,6 +381,19 @@ export default function App() {
   const [reg, setReg] = useState(emptyReg);
   const [editSerialId, setEditSerialId] = useState(null);
 
+  const [newBranchName, setNewBranchName] = useState('');
+  const [itemForm, setItemForm] = useState({
+    name: '',
+    category: 'Computing Hardware',
+    starting: 0,
+  });
+  const [editItemId, setEditItemId] = useState(null);
+  const [editItemForm, setEditItemForm] = useState({
+    name: '',
+    category: 'Computing Hardware',
+    starting: 0,
+  });
+
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(''), 2200);
@@ -614,22 +637,100 @@ export default function App() {
     await loadReports();
   }
 
-  async function addBranch() {
-    const name = prompt('New branch name:');
-    if (!name?.trim()) return;
-    await api.branches.create(name.trim());
-    showToast('Branch added');
-    await loadCore();
+  async function addBranch(e) {
+    e?.preventDefault();
+    const name = newBranchName.trim();
+    if (!name) {
+      showToast('Enter branch name');
+      return;
+    }
+    try {
+      await api.branches.create(name);
+      setNewBranchName('');
+      showToast('Branch added');
+      await loadCore();
+      await loadReports();
+    } catch (err) {
+      showToast(err.message);
+    }
   }
 
-  async function addItem() {
-    const name = prompt('Item name:');
-    if (!name?.trim()) return;
-    const category = prompt('Category:', 'Computing Hardware') || 'Other';
-    const starting = parseInt(prompt('Starting stock:', '0') || '0', 10) || 0;
-    await api.items.create({ name: name.trim(), category, starting_stock: starting });
-    showToast('Item added');
-    await loadCore();
+  async function removeBranch(id, name) {
+    if (!confirm(`Remove branch "${name}"?`)) return;
+    try {
+      await api.branches.remove(id);
+      showToast('Branch removed');
+      await loadCore();
+      await loadReports();
+    } catch (err) {
+      showToast(err.message);
+    }
+  }
+
+  async function saveItem(e) {
+    e?.preventDefault();
+    const name = itemForm.name.trim();
+    if (!name) {
+      showToast('Enter item name');
+      return;
+    }
+    try {
+      await api.items.create({
+        name,
+        category: itemForm.category || 'Other',
+        starting_stock: parseInt(itemForm.starting, 10) || 0,
+      });
+      setItemForm({ name: '', category: 'Computing Hardware', starting: 0 });
+      showToast('Item added');
+      await loadCore();
+      await loadReports();
+    } catch (err) {
+      showToast(err.message);
+    }
+  }
+
+  function startEditItem(i) {
+    setEditItemId(i.id);
+    setEditItemForm({
+      name: i.name || '',
+      category: i.category || 'Other',
+      starting: i.starting ?? 0,
+    });
+  }
+
+  async function saveEditItem(e) {
+    e?.preventDefault();
+    const name = editItemForm.name.trim();
+    if (!name) {
+      showToast('Item name required');
+      return;
+    }
+    try {
+      await api.items.update(editItemId, {
+        name,
+        category: editItemForm.category || 'Other',
+        starting_stock: parseInt(editItemForm.starting, 10) || 0,
+      });
+      setEditItemId(null);
+      showToast('Item updated');
+      await loadCore();
+      await loadReports();
+    } catch (err) {
+      showToast(err.message);
+    }
+  }
+
+  async function removeItem(id, name) {
+    if (!confirm(`Delete item "${name}"? Related transactions may block this.`)) return;
+    try {
+      await api.items.remove(id);
+      if (editItemId === id) setEditItemId(null);
+      showToast('Item deleted');
+      await loadCore();
+      await loadReports();
+    } catch (err) {
+      showToast(err.message);
+    }
   }
 
   if (!user) {
@@ -1525,28 +1626,139 @@ export default function App() {
           <>
             <div className="card">
               <h2>Branches</h2>
+              {!isAdmin && <p className="hint">View-only. Only admin can add or remove branches.</p>}
               {isAdmin && (
-                <button className="btn btn-green" onClick={addBranch}>
-                  Add Branch
-                </button>
+                <form onSubmit={addBranch} className="form-grid" style={{ marginBottom: 12 }}>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label>New branch name</label>
+                    <input
+                      value={newBranchName}
+                      onChange={(e) => setNewBranchName(e.target.value)}
+                      placeholder="e.g. Branch 15"
+                    />
+                  </div>
+                  <div>
+                    <label>&nbsp;</label>
+                    <button type="submit" className="btn btn-green">
+                      Add Branch
+                    </button>
+                  </div>
+                </form>
               )}
-              {!isAdmin && <p className="hint">View-only. Only admin can add branches.</p>}
-              <div className="row-actions" style={{ marginTop: 12 }}>
+              <div className="row-actions" style={{ marginTop: 8 }}>
                 {branches.map((b) => (
                   <span key={b.id} className="cat-tag" style={{ fontSize: '0.85rem', padding: '6px 12px' }}>
                     {b.name}
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        className="btn btn-red btn-sm"
+                        style={{ marginLeft: 6 }}
+                        onClick={() => removeBranch(b.id, b.name)}
+                      >
+                        ×
+                      </button>
+                    )}
                   </span>
                 ))}
               </div>
             </div>
             <div className="card">
               <h2>Items</h2>
+              {!isAdmin && <p className="hint">View-only. Only admin can add or edit items.</p>}
               {isAdmin && (
-                <button className="btn btn-green" onClick={addItem}>
-                  Add Item
-                </button>
+                <form onSubmit={saveItem} className="form-grid" style={{ marginBottom: 12 }}>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label>Item name</label>
+                    <input
+                      value={itemForm.name}
+                      onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
+                      placeholder="e.g. New Phone Model"
+                      required
+                    />
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label>Category</label>
+                    <select
+                      value={itemForm.category}
+                      onChange={(e) => setItemForm({ ...itemForm, category: e.target.value })}
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label>Starting stock</label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={itemForm.starting}
+                      onChange={(e) => setItemForm({ ...itemForm, starting: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label>&nbsp;</label>
+                    <button type="submit" className="btn btn-green">
+                      Add Item
+                    </button>
+                  </div>
+                </form>
               )}
-              {!isAdmin && <p className="hint">View-only. Only admin can add items.</p>}
+              {isAdmin && editItemId && (
+                <form
+                  onSubmit={saveEditItem}
+                  className="form-grid"
+                  style={{ marginBottom: 12, padding: 12, background: '#f0f7ff', borderRadius: 8 }}
+                >
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <strong>Editing item #{editItemId}</strong>
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label>Item name</label>
+                    <input
+                      value={editItemForm.name}
+                      onChange={(e) => setEditItemForm({ ...editItemForm, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label>Category</label>
+                    <select
+                      value={editItemForm.category}
+                      onChange={(e) => setEditItemForm({ ...editItemForm, category: e.target.value })}
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                      {!CATEGORIES.includes(editItemForm.category) && editItemForm.category && (
+                        <option value={editItemForm.category}>{editItemForm.category}</option>
+                      )}
+                    </select>
+                  </div>
+                  <div>
+                    <label>Starting stock</label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={editItemForm.starting}
+                      onChange={(e) => setEditItemForm({ ...editItemForm, starting: e.target.value })}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'end' }}>
+                    <button type="submit" className="btn btn-primary">
+                      Save changes
+                    </button>
+                    <button type="button" className="btn btn-outline" onClick={() => setEditItemId(null)}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
               <div className="scroll" style={{ marginTop: 12 }}>
                 <table>
                   <thead>
@@ -1554,6 +1766,7 @@ export default function App() {
                       <th>Category</th>
                       <th>Item</th>
                       <th>Starting</th>
+                      {isAdmin && <th></th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -1566,6 +1779,19 @@ export default function App() {
                           <b>{i.name}</b>
                         </td>
                         <td>{i.starting}</td>
+                        {isAdmin && (
+                          <td style={{ whiteSpace: 'nowrap' }}>
+                            <button className="btn btn-outline btn-sm" onClick={() => startEditItem(i)}>
+                              Edit
+                            </button>{' '}
+                            <button
+                              className="btn btn-red btn-sm"
+                              onClick={() => removeItem(i.id, i.name)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
