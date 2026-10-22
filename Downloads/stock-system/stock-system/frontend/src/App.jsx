@@ -652,8 +652,18 @@ export default function App() {
           <span style={{ opacity: 0.9, fontSize: '0.85rem' }}>
             {user.displayName || user.username} ({user.role}) · {txns.length} txns
           </span>
-          <button className="btn btn-outline btn-sm" onClick={logout} style={{ color: '#fff', borderColor: 'rgba(255,255,255,.5)' }}>
-            Logout
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={logout}
+            style={{
+              color: '#fff',
+              borderColor: 'rgba(255,255,255,.8)',
+              background: 'rgba(255,255,255,.15)',
+              fontWeight: 700,
+              padding: '6px 14px',
+            }}
+          >
+            Log Out
           </button>
         </div>
       </header>
