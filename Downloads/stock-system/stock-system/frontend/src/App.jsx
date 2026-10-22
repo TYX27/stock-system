@@ -469,30 +469,52 @@ export default function App() {
     return { totalUnits, lowOut };
   }, [items]);
 
-  const filteredItems = items.filter(
-    (i) =>
-      !search ||
-      i.name.toLowerCase().includes(search.toLowerCase()) ||
-      (i.category || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredItems = items
+    .filter(
+      (i) =>
+        !search ||
+        i.name.toLowerCase().includes(search.toLowerCase()) ||
+        (i.category || '').toLowerCase().includes(search.toLowerCase())
+    )
+    .slice()
+    .sort((a, b) => {
+      const c = (a.category || '').localeCompare(b.category || '');
+      if (c !== 0) return c;
+      return (a.name || '').localeCompare(b.name || '');
+    });
 
-  const filteredTxns = txns.filter((t) => {
-    if (!logSearch) return true;
-    const q = logSearch.toLowerCase();
-    return [t.branch, t.item, t.type, t.notes, t.takenBy, t.recordedBy, t.serial]
-      .join(' ')
-      .toLowerCase()
-      .includes(q);
-  });
+  const filteredTxns = txns
+    .filter((t) => {
+      if (!logSearch) return true;
+      const q = logSearch.toLowerCase();
+      return [t.branch, t.item, t.type, t.notes, t.takenBy, t.recordedBy, t.serial]
+        .join(' ')
+        .toLowerCase()
+        .includes(q);
+    })
+    .slice()
+    .sort((a, b) => {
+      // newest date/time first
+      const ka = [a.year, a.month, a.day, a.hour, a.min, a.id].map((x) => String(x ?? '').padStart(4, '0')).join('-');
+      const kb = [b.year, b.month, b.day, b.hour, b.min, b.id].map((x) => String(x ?? '').padStart(4, '0')).join('-');
+      return kb.localeCompare(ka);
+    });
 
-  const filteredSerials = serials.filter((s) => {
-    if (!serialSearch) return true;
-    const q = serialSearch.toLowerCase();
-    return [s.serial, s.item, s.status, s.takenBy, s.recordedBy, s.branch, s.notes]
-      .join(' ')
-      .toLowerCase()
-      .includes(q);
-  });
+  const filteredSerials = serials
+    .filter((s) => {
+      if (!serialSearch) return true;
+      const q = serialSearch.toLowerCase();
+      return [s.serial, s.item, s.status, s.takenBy, s.recordedBy, s.branch, s.notes]
+        .join(' ')
+        .toLowerCase()
+        .includes(q);
+    })
+    .slice()
+    .sort((a, b) => {
+      const ka = [a.year, a.month, a.day, a.hour, a.min, a.id].map((x) => String(x ?? '').padStart(4, '0')).join('-');
+      const kb = [b.year, b.month, b.day, b.hour, b.min, b.id].map((x) => String(x ?? '').padStart(4, '0')).join('-');
+      return kb.localeCompare(ka);
+    });
 
   const serialItems = items.filter((i) => isSerialItem(i.name, i.category));
 
