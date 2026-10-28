@@ -1,10 +1,10 @@
 {
   "name": "stock-system",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend && mkdir -p backend/public && cp -r frontend/dist/* backend/public/",
-    "start": "node backend/scripts/init-db.js && node backend/src/index.js"
+    "start": "node backend/src/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

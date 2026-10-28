@@ -8,4 +8,4 @@ cmds = ["npm install", "npm install --prefix backend", "npm install --prefix fro
 cmds = ["npm run build --prefix frontend", "mkdir -p backend/public", "cp -r frontend/dist/* backend/public/"]
 
 [start]
-cmd = "NODE_PATH=/app/node_modules:/app/backend/node_modules node backend/scripts/init-db.js && NODE_PATH=/app/node_modules:/app/backend/node_modules node backend/src/index.js"
+cmd = "node backend/src/index.js"
